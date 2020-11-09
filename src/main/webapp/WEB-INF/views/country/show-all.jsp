@@ -14,12 +14,14 @@
 <th>Id</th>
 <th>Country Code</th>
 <th>Country Name</th>
+<th>Action</th>
 </tr>
 <c:forEach items="${countries}" var="country">
 <tr>
 <td>${country.id}</td>
 <td>${country.countryCode}</td>
 <td>${country.countryName}</td>
+<td><a href="edit?id=${ country.id }">Edit</a></td>
 </tr>
 </c:forEach>
 </table>

@@ -2,9 +2,22 @@ package com.springPractice.models;
 
 import java.io.Serializable;
 
-public class Country implements Serializable{
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+@Entity
+@Table(name="tbl_country")
+public class Country implements Serializable {
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@Column(name="id",nullable=false)
 	private long id;
+	@Column(name="country_code",unique=true,nullable=false)
 	private String countryCode;
+	@Column(name="country_name",nullable=false)
 	private String countryName;
 	public long getId() {
 		return id;

@@ -27,7 +27,7 @@ public class CountryController {
 	public String addCountry(Model model, @ModelAttribute(name="country") Country country) {
 		countryService.add(country);
 		model.addAttribute("message", "Country Added Successfully");
-		return "redirect:/country/add";
+		return "redirect:/country/show-all";
 	}
 	
 	@GetMapping("country/show-all")

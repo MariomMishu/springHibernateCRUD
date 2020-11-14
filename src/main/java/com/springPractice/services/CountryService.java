@@ -1,9 +1,7 @@
 package com.springPractice.services;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -20,7 +18,7 @@ import com.springPractice.models.Country;
 @Service
 public class CountryService {
 	private final HibernateConfig hibernateConfig;
-	private static List<Country> countries = new ArrayList<Country>();
+	//private static List<Country> countries = new ArrayList<Country>();
 	
 	@Autowired
 	public CountryService(HibernateConfig hibernateConfig) {
@@ -33,7 +31,37 @@ public class CountryService {
 		session.save(country);
 		transaction.commit();
 	}
+	public Country getByCode(String countryCode) {
+		// **************************** HQL Start ******************************//
+//		var session = hibernateConfig.getSession();
+//		var transaction = session.beginTransaction();
+//		var query = session
+//				.getEntityManagerFactory()
+//				.createEntityManager()
+//				.createQuery("SELECT c from com.spring5.practice.model.Country c where c.countryCode=:countryCode", Country.class);
+//		query.setParameter("countryCode", countryCode);
+		// **************************** HQL End ******************************//
+
+		// **************************** Criteria Query Start
+		// **************************//
+		CriteriaBuilder cb = hibernateConfig.getCriteriaBuilder();
+		CriteriaQuery<Country> cq = cb.createQuery(Country.class);
+		Root<Country> root = cq.from(Country.class);
+		cq.where(cb.equal(root.get("countryCode"), countryCode));
+		var result = hibernateConfig.getSession().getEntityManagerFactory().createEntityManager().createQuery(cq)
+				.getResultList();
+
+		// **************************** Criteria Query End **************************//
+		return Optional.ofNullable(result.get(0))
+				.orElseThrow(() -> new RuntimeException("Country not found with this code"));
+	}
+
 	public List<Country> getAll(){
+		var session= hibernateConfig.getSession();
+		var transaction = session.beginTransaction();
+		if(!transaction.isActive()) {
+			transaction= session.beginTransaction();
+		}
 		///HQL Start
 		/*
 		 * var session = hibernateConfig.getSession(); var transaction =
@@ -76,20 +104,5 @@ public class CountryService {
 			e.printStackTrace();
 		}
 	}
-	/*
-	 * public static List<Country> countries= new ArrayList<Country>(); private
-	 * static final String[] COUNTRIES = {"Bangladesh", "India"};
-	 * 
-	 * public CountryService() { Stream.of(COUNTRIES).forEach(country->{
-	 * addCountry(country); }); } private void addCountry(String countryName) { var
-	 * cObj = new Country(); cObj.setId(countries.size()+1);
-	 * cObj.setCountryName(countryName);
-	 * cObj.setCountryCode(countryName.substring(0,3)); countries.add(cObj); }
-	 * public void add(Country country) { country.setId(countries.size()+1);
-	 * countries.add(country); }
-	 */
-	/*
-	 * public List<Country> getAll(){ return countries; }
-	 */
 	
 }
